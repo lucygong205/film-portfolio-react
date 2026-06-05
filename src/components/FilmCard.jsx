@@ -22,8 +22,9 @@ export default function FilmCard({ film }) {
       whileHover={{ y: -5 }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
       className="group flex flex-col h-full overflow-hidden
-                 bg-film-charcoal border border-white/5
-                 hover:border-film-gold/20 transition-colors duration-500"
+                 border border-white/5
+                 hover:border-film-gold/25 transition-colors duration-500"
+      style={{ background: '#231f18' }}
     >
       {/* ── Poster ──────────────────────────────────────────── */}
       <div className="relative overflow-hidden aspect-video shrink-0">

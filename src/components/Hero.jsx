@@ -1,18 +1,23 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 
-// ── Animation variants ─────────────────────────────────────────────
-const container = {
+// ── Gradient base colour ────────────────────────────────────────────
+// Sampled from the dark rock foreground in the bottom-left of the
+// fjord/sunset image — very dark warm-brown, matches the landscape's
+// shadow tones naturally.
+const GRAD = '15, 13, 12'
+
+const stagger = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.14, delayChildren: 0.35 } },
+  show: { transition: { staggerChildren: 0.1, delayChildren: 0.25 } },
 }
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  show:   { opacity: 1, y: 0,  transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } },
+const up = {
+  hidden: { opacity: 0, y: 28 },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.95, ease: [0.16, 1, 0.3, 1] } },
 }
 const fadeIn = {
   hidden: { opacity: 0 },
-  show:   { opacity: 1, transition: { duration: 1.2 } },
+  show:   { opacity: 1, transition: { duration: 0.8 } },
 }
 
 function scrollTo(id) {
@@ -20,110 +25,172 @@ function scrollTo(id) {
 }
 
 export default function Hero() {
-  const sectionRef = useRef(null)
+  const ref = useRef(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
 
-  // Parallax + fade on scroll
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start start', 'end start'],
-  })
-  const bgY      = useTransform(scrollYProgress, [0, 1], ['0%',  '28%'])
-  const contentY = useTransform(scrollYProgress, [0, 1], ['0%',  '14%'])
-  const opacity  = useTransform(scrollYProgress, [0, 0.75], [1, 0])
+  const photoY  = useTransform(scrollYProgress, [0, 1], ['0%',  '18%'])
+  const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
 
   return (
     <section
       id="home"
-      ref={sectionRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      ref={ref}
+      className="relative min-h-screen flex flex-col overflow-hidden"
+      style={{ backgroundColor: '#0f0d0c' }}
     >
-      {/* ── Background layer ──────────────────────────────────── */}
-      <motion.div style={{ y: bgY }} className="absolute inset-0">
-        {/* Base gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a09] via-[#0e0d0b] to-[#080808]" />
-
-        {/* Hero image placeholder — swap src with your own cinematic still */}
+      {/* ── Full-bleed background photo ────────────────────────
+          Put your image at:  portfolio2/public/hero-bg.jpg
+          The landscape image is already wide — object-cover will
+          fill the hero perfectly. object-position shows the
+          mountain/sunset horizon in the centre of the frame.      */}
+      <motion.div style={{ y: photoY }} className="absolute inset-0">
         <img
-          src="https://picsum.photos/seed/hero-film/1920/1080"
-          alt="Hero background"
-          className="absolute inset-0 w-full h-full object-cover opacity-15"
+          src="/hero-bg.jpg"
+          alt="Cinematic landscape — hero background"
+          className="w-full h-full object-cover"
+          style={{ objectPosition: 'center 42%' }}
         />
-
-        {/* Layered overlays for depth */}
-        <div className="absolute inset-0 bg-film-black/65" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_70%_at_50%_40%,rgba(201,162,86,0.07)_0%,transparent_70%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(0,0,0,0.75)_100%)]" />
       </motion.div>
 
-      {/* ── Hero content ──────────────────────────────────────── */}
-      <motion.div
-        style={{ y: contentY, opacity }}
-        className="relative z-10 w-full max-w-5xl mx-auto px-6 text-center"
-      >
-        <motion.div variants={container} initial="hidden" animate="show">
-          {/* Label */}
-          <motion.p variants={fadeUp} className="section-label mb-10">
-            Portfolio &nbsp;·&nbsp; 2024
-          </motion.p>
+      {/* ── Gradient overlays ──────────────────────────────────
+          Layer 1  Left-to-right diagonal: keeps the left reading
+                   zone dark while the right side breathes.
+          Layer 2  Bottom vignette: grounds the text block and
+                   blends into the dark site sections below.
+          Layer 3  Subtle top vignette: ensures navbar is readable
+                   against the dark sky at the top of the photo.   */}
+      <div aria-hidden className="absolute inset-0 pointer-events-none" style={{
+        background: `linear-gradient(
+          108deg,
+          rgba(${GRAD}, 0.88) 0%,
+          rgba(${GRAD}, 0.72) 30%,
+          rgba(${GRAD}, 0.36) 58%,
+          rgba(${GRAD}, 0.08) 78%,
+          transparent          92%
+        )`,
+      }} />
+      <div aria-hidden className="absolute inset-0 pointer-events-none" style={{
+        background: `linear-gradient(to top, rgba(${GRAD},0.80) 0%, rgba(${GRAD},0.30) 32%, transparent 58%)`,
+      }} />
+      <div aria-hidden className="absolute inset-0 pointer-events-none" style={{
+        background: `linear-gradient(to bottom, rgba(${GRAD},0.55) 0%, transparent 22%)`,
+      }} />
 
-          {/* Name */}
-          <motion.h1
-            variants={fadeUp}
-            className="font-display text-[clamp(3.5rem,12vw,10rem)] leading-none tracking-tight text-film-ivory mb-5"
-          >
-            Lucy <em className="text-film-gold not-italic">Gong</em>
-          </motion.h1>
+      {/* ── Content ───────────────────────────────────────────── */}
+      <motion.div style={{ opacity }} className="relative z-10 flex-1 flex flex-col">
 
-          {/* Gold rule */}
-          <motion.div
-            variants={fadeIn}
-            className="w-20 h-px bg-film-gold mx-auto mb-6"
-          />
-
-          {/* Subtitle */}
-          <motion.p
-            variants={fadeUp}
-            className="font-body text-[clamp(0.65rem,1.5vw,0.8rem)] tracking-[0.35em] uppercase text-film-gray-light mb-14"
-          >
-            Filmmaker &nbsp;&nbsp;·&nbsp;&nbsp; Photographer &nbsp;&nbsp;·&nbsp;&nbsp; Visual Storyteller
-          </motion.p>
-
-          {/* CTA buttons */}
-          <motion.div
-            variants={fadeUp}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
-          >
-            <button onClick={() => scrollTo('photography')} className="btn-primary min-w-[190px]">
-              View Photography
-            </button>
-            <button onClick={() => scrollTo('film')} className="btn-primary min-w-[190px]">
-              Watch Films
-            </button>
-            <button onClick={() => scrollTo('contact')} className="btn-ghost min-w-[190px]">
-              Contact Me
-            </button>
-          </motion.div>
-        </motion.div>
-      </motion.div>
-
-      {/* ── Scroll indicator ──────────────────────────────────── */}
-      <motion.button
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2.2, duration: 1 }}
-        onClick={() => scrollTo('about')}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10
-                   flex flex-col items-center gap-2 group"
-      >
-        <span className="section-label text-film-gray group-hover:text-film-gold transition-colors">
-          Scroll
-        </span>
+        {/* Top label bar */}
         <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-          className="w-px h-10 bg-gradient-to-b from-film-gold to-transparent"
-        />
-      </motion.button>
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6, duration: 0.8 }}
+          className="flex items-center justify-between
+                     px-8 md:px-14 lg:px-20 pt-24 lg:pt-28"
+        >
+          <span className="font-body text-[9px] tracking-[0.38em] uppercase text-film-gray-light/70">
+            Portfolio
+          </span>
+          <span className="font-body text-[9px] tracking-[0.28em] uppercase text-film-gray-light/60 hidden sm:block">
+            Filmmaker · Photographer · Visual Storyteller
+          </span>
+        </motion.div>
+
+        {/* Main text block */}
+        <div className="flex-1 flex items-end px-8 md:px-14 lg:px-20 pb-20 md:pb-24">
+          <motion.div variants={stagger} initial="hidden" animate="show" className="max-w-2xl">
+
+            {/* Eyebrow */}
+            <motion.p variants={up}
+              className="font-body text-[10px] tracking-[0.38em] uppercase mb-7"
+              style={{ color: '#c4a96e' }}>
+              Visual Storyteller
+            </motion.p>
+
+            {/* Name — large and commanding */}
+            <motion.h1 variants={up}
+              className="font-display font-normal italic text-film-ivory leading-[0.96] mb-7"
+              style={{
+                fontSize: 'clamp(4rem, 9vw, 7.5rem)',
+                letterSpacing: '-0.03em',
+              }}>
+              Lucy Gong
+            </motion.h1>
+
+            {/* Gold rule */}
+            <motion.div variants={fadeIn}
+              className="bg-film-gold mb-6"
+              style={{ width: 36, height: 1 }} />
+
+            {/* Bio — slightly larger too */}
+            <motion.p variants={up}
+              className="font-body text-film-gray-light leading-relaxed mb-10"
+              style={{ fontSize: '0.95rem', lineHeight: 1.85, maxWidth: '28rem' }}>
+              Filmmaker and photographer exploring memory,
+              identity, and the emotional details of everyday life.
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div variants={up} className="flex flex-wrap items-center gap-4">
+
+              <motion.button
+                onClick={() => scrollTo('film')}
+                whileHover={{ backgroundColor: '#c4a96e', color: '#0f0d0c' }}
+                transition={{ duration: 0.22 }}
+                className="font-body text-[10px] tracking-[0.22em] uppercase
+                           border border-film-gold text-film-gold"
+                style={{ padding: '12px 28px', background: 'transparent' }}>
+                View Films
+              </motion.button>
+
+              <motion.button
+                onClick={() => scrollTo('photography')}
+                whileHover={{ borderColor: '#f0ece3', color: '#f0ece3' }}
+                transition={{ duration: 0.22 }}
+                className="font-body text-[10px] tracking-[0.22em] uppercase"
+                style={{
+                  padding: '12px 28px',
+                  border: '1px solid rgba(240,236,227,0.28)',
+                  color: 'rgba(240,236,227,0.65)',
+                  background: 'transparent',
+                }}>
+                Photography
+              </motion.button>
+
+              <motion.button
+                onClick={() => scrollTo('contact')}
+                whileHover={{ color: '#f0ece3' }}
+                transition={{ duration: 0.2 }}
+                className="font-body text-[10px] tracking-[0.22em] uppercase"
+                style={{ color: 'rgba(240,236,227,0.40)', padding: '12px 8px', background: 'transparent' }}>
+                Contact →
+              </motion.button>
+
+            </motion.div>
+          </motion.div>
+        </div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.6, duration: 0.8 }}
+          className="absolute bottom-8 right-8 md:right-14 lg:right-20 z-10">
+          <button
+            onClick={() => scrollTo('about')}
+            className="flex flex-col items-center gap-2 group">
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
+              className="w-px bg-gradient-to-b from-film-gold to-transparent"
+              style={{ height: 40 }} />
+            <span className="font-body text-[8px] tracking-[0.3em] uppercase text-film-gray
+                             group-hover:text-film-ivory transition-colors duration-300">
+              Scroll
+            </span>
+          </button>
+        </motion.div>
+
+      </motion.div>
     </section>
   )
 }

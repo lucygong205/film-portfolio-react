@@ -14,25 +14,22 @@ function scrollTo(id) {
 }
 
 export default function Navbar() {
-  const [scrolled,       setScrolled]       = useState(false)
-  const [menuOpen,       setMenuOpen]       = useState(false)
-  const [activeSection,  setActiveSection]  = useState('home')
+  const [scrolled,      setScrolled]      = useState(false)
+  const [menuOpen,      setMenuOpen]      = useState(false)
+  const [activeSection, setActiveSection] = useState('home')
 
-  // Darken nav on scroll
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Active section via IntersectionObserver
   useEffect(() => {
-    const ids = NAV_LINKS.map(l => l.href)
-    const observers = ids.map(id => {
-      const el = document.getElementById(id)
+    const observers = NAV_LINKS.map(({ href }) => {
+      const el = document.getElementById(href)
       if (!el) return null
       const obs = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActiveSection(id) },
+        ([e]) => { if (e.isIntersecting) setActiveSection(href) },
         { rootMargin: '-40% 0px -55% 0px' },
       )
       obs.observe(el)
@@ -41,59 +38,57 @@ export default function Navbar() {
     return () => observers.forEach(o => o?.disconnect())
   }, [])
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [menuOpen])
 
-  const handleNav = (id) => {
-    scrollTo(id)
-    setMenuOpen(false)
-  }
+  const handleNav = (id) => { scrollTo(id); setMenuOpen(false) }
 
   return (
     <>
-      {/* ── Desktop / sticky bar ───────────────────────────────── */}
+      {/* ── Bar ───────────────────────────────────────────────── */}
       <motion.nav
-        initial={{ y: -80, opacity: 0 }}
+        initial={{ y: -72, opacity: 0 }}
         animate={{ y: 0,   opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
           scrolled
-            ? 'bg-film-black/90 backdrop-blur-md border-b border-white/5'
+            ? 'bg-film-black/92 backdrop-blur-md border-b border-white/5'
             : 'bg-transparent'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-16 lg:h-20">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12
+                        flex items-center justify-between h-16 lg:h-20">
+
           {/* Logo */}
           <button
             onClick={() => handleNav('home')}
-            className="font-display text-xl text-film-ivory tracking-wide shrink-0"
+            className="font-display text-xl tracking-wide text-film-ivory shrink-0"
           >
-            Lucy <span className="italic text-film-gold">Gong</span>
+            Lucy <em className="not-italic text-film-gold">Gong</em>
           </button>
 
           {/* Desktop links */}
           <div className="hidden md:flex items-center gap-8">
-            {NAV_LINKS.map(link => {
-              const active = activeSection === link.href
+            {NAV_LINKS.map(({ label, href }) => {
+              const active = activeSection === href
               return (
-                <button
-                  key={link.href}
-                  onClick={() => handleNav(link.href)}
-                  className={`relative section-label transition-colors duration-200 ${
-                    active ? 'text-film-gold' : 'text-film-gray hover:text-film-ivory'
-                  }`}
+                <motion.button
+                  key={href}
+                  onClick={() => handleNav(href)}
+                  className="relative section-label transition-colors duration-200"
+                  style={{ color: active ? '#c4a96e' : '#6b6660' }}
+                  whileHover={{ color: active ? '#c4a96e' : '#f0ece3' }}
                 >
-                  {link.label}
+                  {label}
                   {active && (
                     <motion.span
                       layoutId="nav-underline"
                       className="absolute -bottom-0.5 inset-x-0 h-px bg-film-gold"
                     />
                   )}
-                </button>
+                </motion.button>
               )
             })}
           </div>
@@ -104,26 +99,23 @@ export default function Navbar() {
             className="md:hidden flex flex-col justify-center gap-[5px] w-8 h-8"
             onClick={() => setMenuOpen(v => !v)}
           >
-            <motion.span
-              className="w-full h-px bg-film-ivory block origin-center"
-              animate={{ rotate: menuOpen ? 45 : 0, y: menuOpen ? 6 : 0 }}
-              transition={{ duration: 0.3 }}
-            />
-            <motion.span
-              className="w-full h-px bg-film-ivory block"
-              animate={{ opacity: menuOpen ? 0 : 1, scaleX: menuOpen ? 0 : 1 }}
-              transition={{ duration: 0.3 }}
-            />
-            <motion.span
-              className="w-full h-px bg-film-ivory block origin-center"
-              animate={{ rotate: menuOpen ? -45 : 0, y: menuOpen ? -6 : 0 }}
-              transition={{ duration: 0.3 }}
-            />
+            {[
+              { rotate: menuOpen ? 45 : 0,  y: menuOpen ?  6 : 0 },
+              { opacity: menuOpen ? 0 : 1 },
+              { rotate: menuOpen ? -45 : 0, y: menuOpen ? -6 : 0 },
+            ].map((anim, i) => (
+              <motion.span
+                key={i}
+                animate={{ ...anim, backgroundColor: '#f0ece3' }}
+                transition={{ duration: 0.3 }}
+                className="w-full h-px block"
+              />
+            ))}
           </button>
         </div>
       </motion.nav>
 
-      {/* ── Mobile full-screen menu ────────────────────────────── */}
+      {/* ── Mobile menu ───────────────────────────────────────── */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -132,30 +124,31 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-40 bg-film-black/97 backdrop-blur-xl
+            className="fixed inset-0 z-40 backdrop-blur-xl
                        flex flex-col items-center justify-center gap-8 md:hidden"
+            style={{ background: 'rgba(19,17,14,0.97)' }}
           >
-            {NAV_LINKS.map((link, i) => (
+            {NAV_LINKS.map(({ label, href }, i) => (
               <motion.button
-                key={link.href}
-                initial={{ opacity: 0, y: 24 }}
+                key={href}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 16 }}
-                transition={{ delay: i * 0.07, duration: 0.4 }}
-                onClick={() => handleNav(link.href)}
+                exit={{ opacity: 0 }}
+                transition={{ delay: i * 0.06 }}
+                onClick={() => handleNav(href)}
                 className="font-display text-4xl text-film-ivory hover:text-film-gold transition-colors"
               >
-                {link.label}
+                {label}
               </motion.button>
             ))}
-            <motion.div
+            <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.36 }}
               className="absolute bottom-12 section-label text-film-gray"
             >
               Filmmaker · Photographer
-            </motion.div>
+            </motion.p>
           </motion.div>
         )}
       </AnimatePresence>

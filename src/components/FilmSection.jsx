@@ -14,7 +14,7 @@ export default function FilmSection() {
   const rest      = filmData.filter(f => !f.featured)
 
   return (
-    <section id="film" className="py-28 lg:py-40 bg-[#0d0d0b]">
+    <section id="film" className="py-28 lg:py-40 bg-[#191613]">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
 
         {/* ── Section header ──────────────────────────────────── */}

@@ -19,7 +19,7 @@ export default function PhotographyGallery() {
     setLightboxIndex(i => (i < filtered.length - 1 ? i + 1 : 0))
 
   return (
-    <section id="photography" className="py-28 lg:py-40 bg-[#080808]">
+    <section id="photography" className="py-28 lg:py-40 bg-film-black">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
 
         {/* ── Section header ───────────────────────────────────── */}
