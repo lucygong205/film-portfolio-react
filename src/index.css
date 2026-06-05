@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Base ─────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #080808;
+    color: #f5f0e8;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: rgba(201, 162, 86, 0.25);
+    color: #f5f0e8;
+  }
+
+  ::-webkit-scrollbar       { width: 3px; }
+  ::-webkit-scrollbar-track { background: #080808; }
+  ::-webkit-scrollbar-thumb { background: #c9a256; border-radius: 2px; }
+}
+
+/* ─── Component utilities ───────────────────────────────────────── */
+@layer components {
+  .section-label {
+    @apply text-[10px] tracking-[0.3em] uppercase text-film-gold font-body font-medium;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2
+           px-7 py-3 border border-film-gold text-film-gold
+           text-[10px] tracking-[0.2em] uppercase font-body
+           hover:bg-film-gold hover:text-film-black
+           transition-all duration-300;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2
+           px-7 py-3 border border-white/20 text-film-ivory
+           text-[10px] tracking-[0.2em] uppercase font-body
+           hover:border-film-ivory hover:bg-white/5
+           transition-all duration-300;
+  }
+
+  .input-field {
+    @apply w-full bg-transparent border border-white/10 focus:border-film-gold
+           px-4 py-3 text-film-ivory font-body text-sm
+           outline-none transition-colors duration-300
+           placeholder:text-film-gray/40;
+  }
+}
+
+/* ─── Film grain overlay ────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  opacity: 0.035;
+  pointer-events: none;
+  z-index: 9999;
+  animation: grain 0.4s steps(1) infinite;
+}
+
+@keyframes grain {
+  0%   { transform: translate(0,    0); }
+  20%  { transform: translate(-4px, -7px); }
+  40%  { transform: translate(7px,  -3px); }
+  60%  { transform: translate(-3px,  6px); }
+  80%  { transform: translate(6px,   4px); }
+  100% { transform: translate(0,    0); }
+}
+
+/* ─── CSS Masonry grid ──────────────────────────────────────────── */
+.masonry-grid {
+  columns: 1;
+  column-gap: 0.75rem;
+}
+@media (min-width: 640px)  { .masonry-grid { columns: 2; } }
+@media (min-width: 1024px) { .masonry-grid { columns: 3; } }
+
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 0.75rem;
+}
