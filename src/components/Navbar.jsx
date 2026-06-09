@@ -78,7 +78,7 @@ export default function Navbar() {
                   key={href}
                   onClick={() => handleNav(href)}
                   className="relative section-label transition-colors duration-200"
-                  style={{ color: active ? '#c4a96e' : '#6b6660' }}
+                  style={{ color: active ? '#c4a96e' : 'rgba(240,236,227,0.62)' }}
                   whileHover={{ color: active ? '#c4a96e' : '#f0ece3' }}
                 >
                   {label}

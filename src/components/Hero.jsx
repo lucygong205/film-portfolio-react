@@ -73,7 +73,7 @@ export default function Hero() {
         background: `linear-gradient(to top, rgba(${GRAD},0.80) 0%, rgba(${GRAD},0.30) 32%, transparent 58%)`,
       }} />
       <div aria-hidden className="absolute inset-0 pointer-events-none" style={{
-        background: `linear-gradient(to bottom, rgba(${GRAD},0.55) 0%, transparent 22%)`,
+        background: `linear-gradient(to bottom, rgba(${GRAD},0.75) 0%, rgba(${GRAD},0.25) 18%, transparent 32%)`,
       }} />
 
       {/* ── Content ───────────────────────────────────────────── */}
@@ -90,7 +90,8 @@ export default function Hero() {
           <span className="font-body text-[9px] tracking-[0.38em] uppercase text-film-gray-light/70">
             Portfolio
           </span>
-          <span className="font-body text-[9px] tracking-[0.28em] uppercase text-film-gray-light/60 hidden sm:block">
+          <span className="font-body text-[10px] tracking-[0.28em] uppercase hidden sm:block"
+                style={{ color: 'rgba(240,236,227,0.82)' }}>
             Filmmaker · Photographer · Visual Storyteller
           </span>
         </motion.div>
@@ -99,18 +100,11 @@ export default function Hero() {
         <div className="flex-1 flex items-end px-8 md:px-14 lg:px-20 pb-20 md:pb-24">
           <motion.div variants={stagger} initial="hidden" animate="show" className="max-w-2xl">
 
-            {/* Eyebrow */}
-            <motion.p variants={up}
-              className="font-body text-[10px] tracking-[0.38em] uppercase mb-7"
-              style={{ color: '#c4a96e' }}>
-              Visual Storyteller
-            </motion.p>
-
-            {/* Name — large and commanding */}
+            {/* Name */}
             <motion.h1 variants={up}
-              className="font-display font-normal italic text-film-ivory leading-[0.96] mb-7"
+              className="font-display font-normal italic text-film-ivory leading-[0.94] mb-7"
               style={{
-                fontSize: 'clamp(4rem, 9vw, 7.5rem)',
+                fontSize: 'clamp(4rem, 8.5vw, 8rem)',
                 letterSpacing: '-0.03em',
               }}>
               Lucy Gong
@@ -118,13 +112,13 @@ export default function Hero() {
 
             {/* Gold rule */}
             <motion.div variants={fadeIn}
-              className="bg-film-gold mb-6"
-              style={{ width: 36, height: 1 }} />
+              className="bg-film-gold mb-7"
+              style={{ width: 42, height: 1 }} />
 
-            {/* Bio — slightly larger too */}
+            {/* Bio */}
             <motion.p variants={up}
               className="font-body text-film-gray-light leading-relaxed mb-10"
-              style={{ fontSize: '0.95rem', lineHeight: 1.85, maxWidth: '28rem' }}>
+              style={{ fontSize: '1rem', lineHeight: 1.85, maxWidth: '30rem' }}>
               Filmmaker and photographer exploring memory,
               identity, and the emotional details of everyday life.
             </motion.p>
@@ -169,26 +163,6 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.6, duration: 0.8 }}
-          className="absolute bottom-8 right-8 md:right-14 lg:right-20 z-10">
-          <button
-            onClick={() => scrollTo('about')}
-            className="flex flex-col items-center gap-2 group">
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
-              className="w-px bg-gradient-to-b from-film-gold to-transparent"
-              style={{ height: 40 }} />
-            <span className="font-body text-[8px] tracking-[0.3em] uppercase text-film-gray
-                             group-hover:text-film-ivory transition-colors duration-300">
-              Scroll
-            </span>
-          </button>
-        </motion.div>
 
       </motion.div>
     </section>
