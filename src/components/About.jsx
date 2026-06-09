@@ -34,10 +34,10 @@ export default function About() {
             {/* Image — replace src with your portrait photo */}
             <div className="relative z-10 overflow-hidden aspect-[3/4]">
               <img
-                src="https://picsum.photos/seed/about-portrait/600/800"
+                src="/aboutpic.jpg"
                 alt="Lucy Gong — portrait"
-                className="w-full h-full object-cover grayscale hover:grayscale-0
-                           transition-all duration-700 scale-[1.02] hover:scale-100"
+                className="w-full h-full object-cover transition-all duration-700 scale-[1.02] hover:scale-100"
+                style={{ objectPosition: '50% 18%' }}
               />
               {/* Gradient vignette at bottom */}
               <div className="absolute inset-0 bg-gradient-to-t from-film-black/50 via-transparent to-transparent" />
@@ -62,16 +62,15 @@ export default function About() {
             <motion.div {...inView(0.12)} className="w-14 h-px bg-film-gold" />
 
             <motion.p {...inView(0.16)} className="font-body text-film-gray-light leading-relaxed text-base lg:text-[1.05rem]">
-              I am a filmmaker and photographer interested in visual storytelling, memory,
-              identity, travel, and the emotional details of everyday life. My work explores
-              the quiet spaces between moments — the pause before a word, the last light
-              before dark.
+              Hi, I'm Lucy Gong — a filmmaker, photographer, and visual storyteller.
+              Born in Shanghai and shaped by experiences across Los Angeles, New York,
+              and Boston, I use film and photography to explore memory, identity, culture,
+              and human connection.
             </motion.p>
 
             <motion.p {...inView(0.2)} className="font-body text-film-gray-light leading-relaxed text-sm">
-              Based between cities, I collaborate with artists, brands, and storytellers who
-              believe in the power of authentic visual narrative. Whether through a single
-              frame or an hour-long documentary, I seek the truth that lives in the image.
+              Through both moving and still images, I seek to capture the moments that
+              make us feel connected to people, places, and stories.
             </motion.p>
 
             {/* Skill tags */}
